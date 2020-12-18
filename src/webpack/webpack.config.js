@@ -1,6 +1,9 @@
 const { resolve } = require("path");
 //自动清除包
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 //导入在内存中生成 html页面的插件
 //只要是插件，就一定要放到 plugins 节点中去
 //这个插件的两个作用：
@@ -29,16 +32,25 @@ module.exports = {
     rules: [
       {
         //匹配哪些文件
-        test: /\.less/,
+        test: /\.less$/,
+        exclude: /node_modules/,
         //使用哪些loader进行处理
-        use: ["style-loader", "css-loader", "less-loader"],
+        use: [MiniCssExtractPlugin.loader, {
+          loader: 'css-loader',   // 放在后面的先被解析
+          options: {
+              // minimize: true,
+              // modules: true,
+              // localIdentName: '[path][name]_[local]_[hash:base64:5]'       
+
+          }
+        }, "less-loader"],
       },
-      {
-        ///配置处理 .css 文件的第三方loader 规则
-        test: /\.css/,
-        //使用哪些loader进行处理
-        use: ["style-loader", "css-loader"],
-      },
+      // {
+      //   ///配置处理 .css 文件的第三方loader 规则
+      //   test: /\.css$/,
+      //   //使用哪些loader进行处理
+      //   use: ["style-loader", "css-loader"],
+      // },
       {
         // 处理图片资源,但是处理不了html中img的路径问题//处理图片路径的 loader
         test: /\.(jpg|png|gif|jpeg)$/,
@@ -62,15 +74,16 @@ module.exports = {
         //配置 Babel 来转换高级的ES语法
         test: /\.(js|jsx)$/,
         use: {
+          
           loader: "babel-loader",
         },
         exclude: /node_modules/,
       },
-    //   {
-    //     // 打包其他资源
-    //     exclude: /\.(css|js|html)$/,
-    //     loader: "file-loader",
-    //   },
+      //   {
+      //     // 打包其他资源
+      //     exclude: /\.(css|js|html)$/,
+      //     loader: "file-loader",
+      //   },
     ],
   },
   optimization: {
@@ -85,15 +98,6 @@ module.exports = {
       },
     },
   },
-  // 配置插件的节点
-  // 自动打包运行
-  // 指令：npx webpack-dev-server
-  devServer: {
-    contentBase: resolve(ROOTPATH, "build"),
-    compress: true,
-    port: 4399,
-    open: true,
-  },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     alias: {
@@ -102,16 +106,24 @@ module.exports = {
     },
   },
   plugins: [
+    // 一般这个插件是配合 webpack -p 这条命令来使用，
+    // 就是说在为生产环境编译文件的时候，先把 build或dist(就是放生产环境用的文件) 目录里的文件先清除干净，再生成新的。
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].[contenthash].css",
+      chunkFilename: "[id].[contenthash].css",
+    }),
     new HtmlWebpackPlugin({
       //指定模板页面，将来会根据指定的模板页面路径去生成内存中的页面
       template: resolve(ROOTPATH, "public/index.html"),
       //指定生成页面的名称
       filename: "index.html",
+      minify: {
+        // 压缩html
+        collapseWhitespace: true, // 空格
+      },
     }),
-    // 一般这个插件是配合 webpack -p 这条命令来使用，
-    // 就是说在为生产环境编译文件的时候，先把 build或dist(就是放生产环境用的文件) 目录里的文件先清除干净，再生成新的。
-    new CleanWebpackPlugin(),
   ],
-  // 运行模式 开发模式和production产品模式
-  mode: "development",
 };

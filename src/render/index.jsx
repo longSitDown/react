@@ -1,10 +1,8 @@
-const app = document.getElementById('app')
-import React from 'react'
-import ReactDOM from 'react-dom'
+const app = document.getElementById("app");
+import React from "react";
+import ReactDOM from "react-dom";
 
-import App from './views/home'
+import App from "./views/home";
+import MapView from "./views/map";
 
-ReactDOM.render(
-<App/>,
-app
-)
+ReactDOM.render(<MapView />, app);
