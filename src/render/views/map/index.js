@@ -1,14 +1,21 @@
 import React from "react";
 import "./style.less";
-import { Map, Marker, MapvglView, MapvglLayer,NavigationControl,InfoWindow,ZoomControl } from "react-bmapgl";
 
 const MapView = () => {
-  return <Map center={{lng: 116.402544, lat: 39.928216}} zoom="11">
-            <Marker position={{lng: 116.402544, lat: 39.928216}} />
-            <NavigationControl /> 
-            <ZoomControl />
-            {/* <InfoWindow position={{lng: 116.402544, lat: 39.928216}} text="内容" title="标题"/> */}
-        </Map>
+  return (
+    <div className="container">
+      <div className="menu">
+        <div className='btn'>插入图片</div>
+        <div className='btn'>插入视频</div>
+        <div className='btn'>插入按钮</div>
+      </div>
+      <div className="left">
+        
+      </div>
+      <div className="edit-container"></div>
+      <div className="right"></div>
+    </div>
+  );
 };
 
 export default MapView;
